@@ -132,3 +132,32 @@ Population numeric,
 new_vaccinations numeric,
 RollingPeopleVaccinated numeric
 )
+
+ALTER TABLE coviddeaths MODIFY newvaccinations varchar(50) NOT NULL;
+ALTER TABLE coviddeaths MODIFY newvaccinations bigint NOT NULL; 
+
+INSERT INTO PercentofPopulationVaccinated 
+SELECT dea.continent, dea.location, dea.date, dea.population, vac.new_vaccinations,
+SUM( vac.new_vaccinations) OVER (Partition by dea.location order by dea.location, dea.date) as RollingPeopleVaccinated
+-- , (RollingPeopleVaccinated/population)*100
+FROM coviddeaths dea
+JOIN covidvaccinations vac
+		ON dea.location = vac.location
+        AND dea.date = vac.date
+-- WHERE dea.continent is not null
+-- order by 2,3
+
+SELECT *, (RollingPeopleVaccinated/Population)*100 
+FROM #PercentofPopulationVaccinated
+
+-- Creating View to store data for later visualizations 
+
+Create View PercentPopulationVaccinated1 as
+SELECT dea.continent, dea.location, dea.date, dea.population, vac.new_vaccinations,
+SUM( vac.new_vaccinations) OVER (Partition by dea.location order by dea.location, dea.date) as RollingPeopleVaccinated
+-- , (RollingPeopleVaccinated/population)*100
+FROM coviddeaths dea
+JOIN covidvaccinations vac
+		ON dea.location = vac.location
+        AND dea.date = vac.date
+WHERE dea.continent is not null
