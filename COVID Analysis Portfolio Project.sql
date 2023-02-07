@@ -1,10 +1,3 @@
-/*
-Covid 19 Data Exploration (Mainly focusing on the United States)
-
-Skills used: CTE's, Temp Tables, Windows Functions, Aggregate Functions, Creating Views, Converting Data Types 
-
-*/
-
 SELECT * from coviddeaths WHERE continent is not null order by 3,4;
 
 -- Select data that weare going to be using 
